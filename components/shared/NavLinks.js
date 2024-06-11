@@ -65,7 +65,7 @@ const NavLinks = ({ user }) => {
       <Link
         href={user ? "/snippets" : "/login"}
         className={`py-2 px-6 font-medium ${
-          pathname === "/dev" && "bg-dark-1 text-white rounded-full"
+          pathname === "/snippets" && "bg-dark-1 text-white rounded-full"
         }`}
       >
         Snippets
