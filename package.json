@@ -29,7 +29,7 @@
     "@radix-ui/react-select": "^2.0.0",
     "@uiw/codemirror-theme-eclipse": "^4.21.24",
     "@uiw/codemirror-theme-github": "^4.22.1",
-    "@uiw/codemirror-theme-vscode": "^4.21.24",
+    "@uiw/codemirror-theme-vscode": "^4.22.2",
     "@uiw/react-codemirror": "^4.21.24",
     "axios": "^1.6.7",
     "bcrypt": "^5.1.1",
