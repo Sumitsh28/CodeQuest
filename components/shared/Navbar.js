@@ -12,7 +12,7 @@ const Navbar = async () => {
 
   return (
     <div className="w-full bg-[#262626]">
-      <div className="max-w-6xl mx-auto flex justify-between items-center px-2 py-6">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-2 py-6">
         <Link href="/" className="flex justify-center items-center gap-3 ">
           <img
             src="/logo.png"

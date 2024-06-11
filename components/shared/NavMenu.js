@@ -75,6 +75,15 @@ const NavMenu = ({ user }) => {
             Dev
           </Link>
           <Link
+            href={user ? "/snippets" : "/login"}
+            className={`py-2 px-6 font-medium ${
+              pathname === "/dev" && "bg-dark-1 text-white rounded-full"
+            }`}
+            onClick={() => setOpen(false)}
+          >
+            Snippets
+          </Link>
+          <Link
             href={user ? "/news" : "/login"}
             className={`py-2 px-6 font-medium ${
               pathname === "/news" && "bg-dark-1 text-white rounded-full"

@@ -2,6 +2,7 @@ import "./globals.css";
 import Navbar from "@/components/shared/Navbar";
 import Head from "next/head";
 import fav from "../public/favicon.ico";
+import { EditorProvider } from "@/components/snippets/EditorContext";
 
 export const metadata = {
   title: "Code Quest",
@@ -17,8 +18,10 @@ export default function RootLayout({ children }) {
         <link rel="icon" href={fav} />
       </Head>
       <body>
-        <Navbar />
-        {children}
+        <EditorProvider>
+          <Navbar />
+          {children}
+        </EditorProvider>
       </body>
     </html>
   );
