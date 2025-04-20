@@ -104,15 +104,16 @@ export default function LoginPage() {
         </div>
         <div className="text-center text-[#3F74E6] mt-12">
           {isLogin ? "Don't have an account?" : "Already had an account?"}{" "}
-            <h1>For Quick Access</h1>
-              <h2>Email: ss@admin.com </h2>
-              <h2>Password: 12345 </h2>
-          <span
+        <span
             className="underline cursor-pointer"
             onClick={() => setIsLogin((prev) => !prev)}
           >
             {isLogin ? "Register" : "Login"}
           </span>
+            <h1>For Quick Access</h1>
+              <h2>Email: ss@admin.com </h2>
+              <h2>Password: 12345 </h2>
+          
         </div>
       </form>
     </section>
