@@ -6,6 +6,10 @@
 # Welcome to Code Quest!
 Code Quest is a comprehensive coding platform built with Next.js, designed to provide an immersive learning experience, facilitate problem-solving, offer roadmaps, host coding contests, enable real-time collaboration, support development tasks, and more. Whether you're a beginner or an experienced developer, Code Quest has something for everyone to level up their coding skills.
 
+## Process Flow
+![Screenshot (26)](https://github.com/user-attachments/assets/f3e3d1c1-d5da-4e4e-89ef-bf06674cc095)
+
+
 ## Features
 ### Learning Docs
 Access a wide range of learning materials, including tutorials, articles, and guides, to enhance your understanding of various programming concepts.
