@@ -4,7 +4,6 @@ import { useRouter, useParams } from "next/navigation";
 import { generateColor } from "./utils";
 import Meeting from "@/components/sync/Meeting";
 import "./Room.css";
-import { languagesData } from "@/constants";
 import Loader from "@/components/shared/Loader";
 import CustomInput from "@/components/shared/CustomInput";
 import OutputWindow from "@/components/shared/OutputWindow";
@@ -14,7 +13,6 @@ import FontSizeDropdown from "@/components/shared/FontSizeDropdown";
 import Timer from "@/components/shared/Timer";
 import { AiOutlineFullscreen, AiOutlineFullscreenExit } from "react-icons/ai";
 import CodeEditorWindow from "@/components/shared/CodeEditorWindow";
-import axios from "axios";
 
 export default function Room({ socket }) {
   const navigate = useRouter();
@@ -81,7 +79,7 @@ export default function Room({ socket }) {
         if (!("usr" in eventStateObj) || !("username" in eventStateObj.usr)) {
           socket.disconnect();
         }
-      }
+      },
     );
 
     return () => {
@@ -91,30 +89,26 @@ export default function Room({ socket }) {
 
   const handleCompile = async (input) => {
     setIsCodeRunning(true);
-    const options = {
-      method: "POST",
-      url: "https://jdoodle2.p.rapidapi.com/v1",
-      headers: {
-        "content-type": "application/json",
-        "X-RapidAPI-Key": process.env.NEXT_PUBLIC_RAPID_API_KEY,
-        "X-RapidAPI-Host": process.env.NEXT_PUBLIC_RAPID_API_HOST,
-      },
-      data: {
-        language: language.value,
-        version: "latest",
-        code: fetchedCode,
-        input: input,
-      },
-    };
-
     try {
-      const response = await axios.request(options);
-      setOutputDetails(response.data);
-      setIsCodeRunning(false);
-      return response.data.output;
+      const res = await fetch("/api/runCode", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code: fetchedCode,
+          input: input,
+          language: language.value,
+        }),
+      });
+
+      const data = await res.json();
+      setOutputDetails(data);
     } catch (error) {
+      console.error("Error compiling code:", error);
+      setOutputDetails({ output: "Error compiling code" });
+    } finally {
       setIsCodeRunning(false);
-      console.error(error);
     }
   };
 
@@ -196,7 +190,7 @@ export default function Room({ socket }) {
             <FontSizeDropdown onSelectChange={(f) => setFontSize(f)} />
           </div>
           <div className="flex gap-2 items-center">
-            <Timer  />
+            <Timer />
             <button
               onClick={handleFullScreen}
               className="hover:bg-light-3 hover:border-light-4 rounded-lg p-1"

@@ -1,16 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import LanguagesDropdown from "./LanguagesDropdown";
-import ThemeDropdown from "./ThemeDropdown";
-import CodeEditorWindow from "./CodeEditorWindow";
-import OutputWindow from "./OutputWindow";
-import CustomInput from "./CustomInput";
+import LanguagesDropdown from "../shared/LanguagesDropdown";
+import ThemeDropdown from "../shared/ThemeDropdown";
+import CodeEditorWindow from "../shared/CodeEditorWindow";
+import OutputWindow from "../shared/OutputWindow";
+import CustomInput from "../shared/CustomInput";
 import { languagesData, mockComments } from "@/constants";
 import { AiOutlineFullscreen, AiOutlineFullscreenExit } from "react-icons/ai";
-import Timer from "./Timer";
-import axios from "axios";
+import Timer from "../shared/Timer";
 import Loader from "../shared/Loader";
-import FontSizeDropdown from "./FontSizeDropdown";
+import FontSizeDropdown from "../shared/FontSizeDropdown";
 
 const Playground = ({
   problem = null,
@@ -18,7 +17,7 @@ const Playground = ({
   setSubmitted,
 }) => {
   const [customInput, setCustomInput] = useState(
-    problem ? problem.testCase.input[0] : ""
+    problem?.testCase?.input ? problem.testCase.input[0] : "",
   );
   const [outputDetails, setOutputDetails] = useState(null);
   const [isCodeRunning, setIsCodeRunning] = useState(false);
@@ -67,64 +66,66 @@ const Playground = ({
     }
   };
 
-  const handleCompile = async (input, forSubmisssion = false) => {
-    if (!forSubmisssion) setIsCodeRunning(true);
-    const options = {
-      method: "POST",
-      url: "https://jdoodle2.p.rapidapi.com/v1",
-      headers: {
-        "content-type": "application/json",
-        "X-RapidAPI-Key": process.env.NEXT_PUBLIC_RAPID_API_KEY,
-        "X-RapidAPI-Host": process.env.NEXT_PUBLIC_RAPID_API_HOST,
-      },
-      data: {
-        language: language.value,
-        version: "latest",
-        code: code,
-        input: input,
-      },
-    };
-
+  const handleCompile = async (input) => {
+    setIsCodeRunning(true);
     try {
-      const response = await axios.request(options);
-      if (!forSubmisssion) {
-        setOutputDetails(response.data);
-        setIsCodeRunning(false);
-      }
-      return response.data.output;
+      const res = await fetch("/api/runCode", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code,
+          input,
+          language: language.value,
+        }),
+      });
+
+      const data = await res.json();
+      setOutputDetails(data);
     } catch (error) {
+      console.error("Error compiling code:", error);
+      setOutputDetails({ output: "Error compiling code" });
+    } finally {
       setIsCodeRunning(false);
-      console.error(error);
     }
   };
 
   const handleSubmit = async () => {
     setIsCodeSubmitting(true);
     try {
-      const testcases = { ...problem.testCase };
-      let allCorrect = true;
-      for (let i = 0; i < testcases.input.length; i++) {
-        const ans = await handleCompile(testcases.input[i], true);
-        if (ans !== testcases.output[i]) {
-          allCorrect = false;
-          setOutputDetails({
-            submitted: true,
-            accepted: false,
-            output: ans,
-          });
-          break;
+      const res = await fetch("/api/submitCode", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code,
+          problem: problem?.id,
+          language: language.value,
+        }),
+      });
+      const data = await res.json();
+
+      if (data.isAccepted === "accepted") {
+        if (setSubmitted) {
+          setSubmitted(true);
+          setTimeout(() => setSubmitted(false), 5000);
         }
-      }
-      if (allCorrect) {
         setOutputDetails({
+          output: "Accepted",
           submitted: true,
           accepted: true,
         });
-        setSubmitted(true);
-        setTimeout(() => setSubmitted(false), 5000);
+      } else {
+        setOutputDetails({
+          output: data.output,
+          submitted: true,
+          accepted: false,
+        });
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error submitting code:", error);
     } finally {
       setIsCodeSubmitting(false);
     }

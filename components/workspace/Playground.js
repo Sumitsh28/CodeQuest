@@ -76,35 +76,24 @@ const Playground = ({ problems, isForSubmission = true, setSubmitted }) => {
     }
   };
 
-  const handleCompile = async (input, forSubmisssion = false) => {
-    if (!forSubmisssion) setIsCodeRunning(true);
-    const options = {
-      method: "POST",
-      url: "https://jdoodle2.p.rapidapi.com/v1",
-      headers: {
-        "content-type": "application/json",
-        "X-RapidAPI-Key": process.env.NEXT_PUBLIC_RAPID_API_KEY,
-        "X-RapidAPI-Host": process.env.NEXT_PUBLIC_RAPID_API_HOST,
-      },
-      data: {
-        language: language.value,
-        version: "latest",
-        code: code,
-        input: input,
-      },
-    };
+  const handleCompile = async (input) => {
+    setIsCodeRunning(true);
 
-    try {
-      const response = await axios.request(options);
-      if (!forSubmisssion) {
-        setOutputDetails(response.data);
-        setIsCodeRunning(false);
-      }
-      return response.data.output;
-    } catch (error) {
-      setIsCodeRunning(false);
-      console.error(error);
-    }
+    const res = await fetch("/api/runCode", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        code,
+        input,
+        language: language.value,
+      }),
+    });
+
+    const data = await res.json();
+    setOutputDetails(data);
+    setIsCodeRunning(false);
   };
 
   const handleSubmit = async () => {
